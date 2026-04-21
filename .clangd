@@ -1,0 +1,26 @@
+## /*!
+## @file
+## clangd settings.
+##
+## https://clangd.llvm.org/config.html
+## */
+
+# Be strict about inclusions. This forces including some headers like stdio.h or
+# stdlib.h explicitly, even when they're not strictly needed, because Include-
+# What-You-Use has opinions about where things like size_t should come from.
+# This is annoying, but the trade-off is better correctness and fewer hidden
+# dependencies and probably worth it.
+#
+# Note that this only affects clangd when in LSP server mode, so running e.g.
+# 'clangd --check' or clang-tidy will do something different. This is really
+# unfortunate, but it is what it is. You have to just keep track of the IWYU
+# errors in VSCode, and you can't do a full project pass -- VSCode will only
+# check open files. So just try to fix as you go.
+Diagnostics:
+  UnusedIncludes: Strict
+  MissingIncludes: Strict
+
+# Tell clangd to treat all files as C source files. This helps IWYU understand
+# that it should not suggest C++ headers in C files.
+CompileFlags:
+  Add: [ -xc ]

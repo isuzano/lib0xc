@@ -1,0 +1,52 @@
+## /*!
+## @file
+## Owners file. This is going to look a lot like the credits for The Room, where
+## the project is written, produced, and directed by the lead actor.
+## */
+
+# Build system.
+Makefile @SIGFUN
+Makefile.public @SIGFUN
+
+
+# Generic sources. All target-independent code goes here. This does not actually
+# contain a target; it exports stuff for other targets.
+src @SIGFUN
+
+# Public header hierarchy. Organization:
+#
+#    shim
+#    Shims for stuff that is inconsistently available
+#
+#    std
+#    Extensions to functionality that is found in the std*.h family of headers
+#
+#    sys
+#    System programming goodies
+#
+#    sys/buff
+#    Buffer object for bounds-safe reads and writes
+#
+#    sys/call
+#    Call object for more advanced continuation and context-switching-based
+#    programming
+#
+#    sys/check
+#    Simple unit testing functions
+#
+#    sys/log
+#    Object logging protocol which supports subject-based logging
+#
+# src/mk contains Makefiles that define all the generic code and headers that
+# targets should include.
+src/0xc @SIGFUN
+src/mk @SIGFUN
+
+# POSIX target.
+posix @SIGFUN
+posix/mk @SIGFUN
+
+
+# Unit test target.
+0xtest @SIGFUN
+0xtest/mk @SIGFUN

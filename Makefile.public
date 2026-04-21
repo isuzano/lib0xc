@@ -1,0 +1,153 @@
+## /*!
+## @file
+## Standalone Makefile for open source builds of lib0xc. Produces a static
+## archive and a test executable for POSIX hosts (Darwin and Linux).
+## */
+
+# MARK: Platform Detection
+UNAME := $(shell uname -s)
+ARCH := $(shell uname -m)
+
+ifeq ($(ARCH),aarch64)
+ARCH := arm64
+endif
+
+# MARK: Source Lists
+include src/mk/src.mk
+include src/mk/hdrs.mk
+include posix/mk/src.mk
+
+SRC_LIB := \
+	$(SRC_GEN) \
+	$(SRC_POSIX)
+
+SRC_TEST := \
+	$(SRC_LIB) \
+	$(wildcard 0xtest/unit/*.c) \
+	0xtest/rand.c \
+	0xtest/main.c
+
+# MARK: Build Configuration
+BUILDDIR ?= build/public
+OBJDIR_LIB := $(BUILDDIR)/obj/lib
+OBJDIR_TEST := $(BUILDDIR)/obj/test
+
+CC ?= cc
+AR ?= ar
+
+GCC_CLANG_COMMON := \
+	-Werror \
+	-Wall \
+	-Wextra \
+	-Wcast-qual \
+	-Wconversion \
+	-Wformat=2 \
+	-Wformat-security \
+	-Wnull-dereference \
+	-Wstack-protector \
+	-Wvla \
+	-Warray-bounds \
+	-Wimplicit-fallthrough \
+	-Wint-conversion \
+	-Wdouble-promotion \
+	-Wundef \
+	-Wstrict-prototypes \
+	-Wbad-function-cast \
+	-Wfloat-equal \
+	-Wpointer-arith
+
+CLANG_WARN := \
+	$(GCC_CLANG_COMMON) \
+	-Wshorten-64-to-32 \
+	-Warray-bounds-pointer-arithmetic \
+	-Wconditional-uninitialized \
+	-Wloop-analysis \
+	-Wshift-sign-overflow \
+	-Wtautological-constant-in-range-compare \
+	-Wcomma \
+	-Wassign-enum \
+	-Wformat-type-confusion \
+	-Widiomatic-parentheses \
+	-Wunreachable-code-aggressive \
+	-Wthread-safety \
+	-ftrivial-auto-var-init=zero \
+	-fbounds-safety
+
+GCC_WARN := \
+	$(GCC_CLANG_COMMON) \
+	-Wformat-truncation=2 \
+	-Wformat-signedness \
+	-Wuninitialized \
+	-Wlogical-op \
+	-Wduplicated-cond \
+	-Wduplicated-branches
+
+# Select warning set based on compiler.
+COMPILER_ID := $(shell $(CC) --version 2>&1 | head -1)
+ifneq ($(findstring clang,$(COMPILER_ID)),)
+CWARN := $(CLANG_WARN)
+else
+CWARN := $(GCC_WARN)
+endif
+
+CFLAGS_COMMON := \
+	-std=gnu11 \
+	$(CWARN) \
+	-fstack-protector-strong \
+	-fno-delete-null-pointer-checks \
+	-ftrapv \
+	-Isrc \
+	-Iposix \
+	-g \
+	-DTARGET_0XTEST=1
+
+include posix/mk/flags.mk
+
+ifeq ($(ARCH),arm64)
+CFLAGS_ARCH := $(CFLAGS_ARM64)
+else ifeq ($(ARCH),x86_64)
+CFLAGS_ARCH := $(CFLAGS_X86_64)
+endif
+
+CFLAGS_PLATFORM :=
+
+CFLAGS_LIB := $(CFLAGS_COMMON) $(CFLAGS_ARCH) $(CFLAGS_PLATFORM)
+CFLAGS_TEST := $(CFLAGS_COMMON) $(CFLAGS_ARCH) $(CFLAGS_PLATFORM) -I0xtest
+
+# MARK: Object Lists
+OBJ_LIB := $(patsubst %.c,$(OBJDIR_LIB)/%.o,$(SRC_LIB))
+OBJ_TEST := $(patsubst %.c,$(OBJDIR_TEST)/%.o,$(SRC_TEST))
+
+# MARK: Products
+LIB := $(BUILDDIR)/lib0xc.a
+TEST := $(BUILDDIR)/0xtest
+
+# MARK: Targets
+.PHONY: all lib test clean
+
+all: lib
+
+lib: $(LIB)
+
+test: $(TEST)
+	$(TEST)
+
+clean:
+	rm -rf $(BUILDDIR)
+
+# MARK: Rules
+$(LIB): $(OBJ_LIB)
+	@mkdir -p $(dir $@)
+	$(AR) rcs $@ $^
+
+$(TEST): $(OBJ_TEST)
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS_TEST) -o $@ $^
+
+$(OBJDIR_LIB)/%.o: %.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS_LIB) -c -o $@ $<
+
+$(OBJDIR_TEST)/%.o: %.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS_TEST) -c -o $@ $<

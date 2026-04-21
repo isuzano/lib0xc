@@ -1,0 +1,62 @@
+{
+    "$schema": "https://json.schemastore.org/component-detection-manifest.json",
+    "version": 1,
+    "registrations": [
+        {
+            "component": {
+                "type": "git",
+                "git": {
+                    "repositoryUrl": "https://github.com/freebsd/freebsd-src",
+                    "commitHash": "aa15df4597053c0e95a15b2a7036296999cd562a"
+                }
+            },
+            "detectedComponentLocations": [
+                "src/0xc/sys/queue.h"
+            ],
+            "developmentDependency": false,
+            "license": "BSD-3-Clause"
+        },
+        {
+            "component": {
+                "type": "git",
+                "git": {
+                    "repositoryUrl": "https://github.com/swiftlang/llvm-project",
+                    "commitHash": "70040475950f0b0606dead9de3c89892cecbd609"
+                }
+            },
+            "detectedComponentLocations": [
+                "src/0xc/shim/ptrcheck.h"
+            ],
+            "developmentDependency": false,
+            "license": "Apache-2.0 WITH LLVM-exception"
+        },
+        {
+            "component": {
+                "type": "git",
+                "git": {
+                    "repositoryUrl": "https://github.com/aappleby/smhasher",
+                    "commitHash": "0ff96f7835817a27d0487325b6c16033e2992eb5"
+                }
+            },
+            "detectedComponentLocations": [
+                "src/0xc/sys/hash.c"
+            ],
+            "developmentDependency": false,
+            "license": "Public-Domain"
+        },
+        {
+            "component": {
+                "type": "git",
+                "git": {
+                    "repositoryUrl": "https://github.com/freebsd/freebsd-src",
+                    "commitHash": "5ccaab1797e5bdc404f2299ebaec1265547a4744"
+                }
+            },
+            "detectedComponentLocations": [
+                "src/0xc/shim/sysexits.h"
+            ],
+            "developmentDependency": false,
+            "license": "BSD-3-Clause"
+        }
+    ]
+}
