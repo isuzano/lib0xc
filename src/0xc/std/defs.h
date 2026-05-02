@@ -39,13 +39,17 @@
 #ifndef __has_extension
 #define __has_extension(X) 0
 #endif
-
+#ifndef __has_ptrcheck
+#define __has_ptrcheck 0
+#endif
 // clang-17 doesn't appear to expose the c_fixed_enum extension for checking,
 // but it's been around long enough that we can assume it's there when compiling
 // with clang. Otherwise, we can check for it directly. This syntax was added to
 // C in C23.
-#if __clang__ || __has_extension(c_fixed_enum) || __STDC_VERSION__ >= 202311L
+#if defined(__clang__) || __has_extension(c_fixed_enum) || __STDC_VERSION__ >= 202311L
 #define __ZX_FIXED_ENUMS 1
+#else
+#define __ZX_FIXED_ENUMS 0
 #endif
 
 #if __GNUC__

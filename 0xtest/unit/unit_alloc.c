@@ -60,7 +60,7 @@ UNIT_TEST_FUNC(alloc)(
 		p_check = p;
 	} while (0);
 
-#if __APPLE__
+#if defined(__APPLE__)
 	p_size = malloc_size(p_check);
 	checkuint("allocation freed", p_size, 0);
 #endif
