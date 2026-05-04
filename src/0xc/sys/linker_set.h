@@ -63,7 +63,7 @@ __API_HEADER_BEGIN(c, nonnull, single)
  * not. For GCC, we rely on inline helper functions that are annotated (which is
  * allowed) to perform the pointer accesses.
  */
-#if __clang__
+#if defined(__clang__)
 #define _LINKER_SET_ATTR_NOSAN __attribute__((no_sanitize("address")))
 #else
 #define _LINKER_SET_ATTR_NOSAN

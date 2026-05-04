@@ -125,7 +125,7 @@ __API_HEADER_BEGIN(c, nonnull, single)
  * An array whose elements are of type @T and whose count is @N, initialized to
  * zero.
  */
-#if __clang__
+#if defined(__clang__)
 #define zarray(T, N) (T [N]){0}
 #else
 #define zarray(T, N) {0}
